@@ -363,7 +363,52 @@
     return { bmr: Math.round(v), tdee: Math.round(tdee), diet: Math.round(tdee - 500) };
   }
 
-  var api = { Y: Y, parse: parse, discharge: discharge, dueDate: dueDate, gpa: gpa, bmr: bmr, deposit: deposit, savings: savings, leavePay: leavePay, workHours: workHours, charCount: charCount, dday: dday, brokerage: brokerage, rentConvert: rentConvert, percent: percent, bmi: bmi, severance: severance, unemployment: unemployment, insurance: insurance, weeklyHoliday: weeklyHoliday, wageConvert: wageConvert, annualLeave: annualLeave, loan: loan, vat: vat, area: area, age: age };
+  // 근로소득세(간이세액표) — 월 과세급여(원), 공제대상가족 수(본인 포함)
+  function taxTable() {
+    if (root && root.TAXTABLE) return root.TAXTABLE;
+    if (typeof require === 'function') return require('./taxtable.js');
+    throw new Error('세액표를 불러오지 못했습니다.');
+  }
+  function incomeTax(monthly, family) {
+    var T = taxTable(), f = Math.max(1, Math.min(11, Math.round(family))) - 1;
+    var k = monthly / 1000; // 천원
+    if (k < T.rows[0][0]) return 0;
+    if (k < 10000) {
+      for (var i = 0; i < T.rows.length; i++) if (k >= T.rows[i][0] && k < T.rows[i][1]) return T.rows[i][2 + f];
+      return 0;
+    }
+    var base = T.top[f], over = monthly - 10000000, extra;
+    if (monthly <= 10000000) return base;
+    if (monthly <= 14000000) extra = over * 0.98 * 0.35 + 25000;
+    else if (monthly <= 28000000) extra = 1397000 + (monthly - 14000000) * 0.98 * 0.38;
+    else if (monthly <= 30000000) extra = 6610600 + (monthly - 28000000) * 0.98 * 0.40;
+    else if (monthly <= 45000000) extra = 7394600 + (monthly - 30000000) * 0.40;
+    else if (monthly <= 87000000) extra = 13394600 + (monthly - 45000000) * 0.42;
+    else extra = 31034600 + (monthly - 87000000) * 0.45;
+    return Math.floor((base + extra) / 10) * 10;
+  }
+  // 연봉 실수령액
+  function salary(i) {
+    var annual = num(i.annual);
+    need(annual > 0, '연봉(세전)을 넣어 주세요.');
+    var nontax = num(i.nontax); if (!(nontax >= 0)) nontax = 0;
+    var monthly = Math.floor(annual / 12);
+    var taxable = Math.max(0, monthly - nontax);
+    var fam = Math.max(1, Math.round(num(i.family) || 1));
+    var kids = Math.max(0, Math.round(num(i.kids) || 0));
+    var ins = taxable > 0 ? insurance({ pay: taxable }) : { pension: 0, health: 0, care: 0, employ: 0, total: 0 };
+    var rate = (num(i.rate) || 100) / 100;
+    kids = Math.min(kids, fam - 1);
+    // 8~20세 자녀 세액 차감 (2026.3 개정: 1명 20,830원, 2명 45,830원, 3명부터 1명당 33,330원 추가)
+    var kidCut = kids === 0 ? 0 : kids === 1 ? 20830 : 45830 + (kids - 2) * 33330;
+    var it = Math.floor(Math.max(0, incomeTax(taxable, fam) - kidCut) * rate / 10) * 10;
+    var local = Math.floor(it * 0.1 / 10) * 10;
+    var deduct = ins.total + it + local;
+    var net = monthly - deduct;
+    return { net: net, netYear: net * 12, monthly: monthly, pension: ins.pension, health: ins.health, care: ins.care, employ: ins.employ, incomeTax: it, localTax: local, deduct: deduct };
+  }
+
+  var api = { Y: Y, parse: parse, incomeTax: incomeTax, salary: salary, discharge: discharge, dueDate: dueDate, gpa: gpa, bmr: bmr, deposit: deposit, savings: savings, leavePay: leavePay, workHours: workHours, charCount: charCount, dday: dday, brokerage: brokerage, rentConvert: rentConvert, percent: percent, bmi: bmi, severance: severance, unemployment: unemployment, insurance: insurance, weeklyHoliday: weeklyHoliday, wageConvert: wageConvert, annualLeave: annualLeave, loan: loan, vat: vat, area: area, age: age };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.Calc = api;
 })(this);
