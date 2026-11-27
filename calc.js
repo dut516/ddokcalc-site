@@ -408,7 +408,58 @@
     return { net: net, netYear: net * 12, monthly: monthly, pension: ins.pension, health: ins.health, care: ins.care, employ: ins.employ, incomeTax: it, localTax: local, deduct: deduct };
   }
 
-  var api = { Y: Y, parse: parse, incomeTax: incomeTax, salary: salary, discharge: discharge, dueDate: dueDate, gpa: gpa, bmr: bmr, deposit: deposit, savings: savings, leavePay: leavePay, workHours: workHours, charCount: charCount, dday: dday, brokerage: brokerage, rentConvert: rentConvert, percent: percent, bmi: bmi, severance: severance, unemployment: unemployment, insurance: insurance, weeklyHoliday: weeklyHoliday, wageConvert: wageConvert, annualLeave: annualLeave, loan: loan, vat: vat, area: area, age: age };
+  // ── 연말정산 (근로소득 연간 정산) ──
+  function earnedDeduction(g) { // 근로소득공제
+    var d = g <= 5e6 ? g * 0.7 : g <= 15e6 ? 3.5e6 + (g - 5e6) * 0.4 : g <= 45e6 ? 7.5e6 + (g - 15e6) * 0.15 : g <= 1e8 ? 12e6 + (g - 45e6) * 0.05 : 14.75e6 + (g - 1e8) * 0.02;
+    return Math.min(2e7, Math.floor(d));
+  }
+  function basicTax(b) { // 종합소득세 기본세율 (2023년 이후)
+    var T = [[14e6, 0, 0.06, 0], [5e7, 84e4, 0.15, 14e6], [88e6, 624e4, 0.24, 5e7], [15e7, 1536e4, 0.35, 88e6], [3e8, 3706e4, 0.38, 15e7], [5e8, 9406e4, 0.40, 3e8], [1e9, 17406e4, 0.42, 5e8], [Infinity, 38406e4, 0.45, 1e9]];
+    if (b <= 0) return 0;
+    for (var i = 0; i < T.length; i++) if (b <= T[i][0]) return Math.floor(T[i][1] + (b - T[i][3]) * T[i][2]);
+  }
+  function earnedCreditLimit(g) { // 근로소득세액공제 한도
+    if (g <= 33e6) return 74e4;
+    if (g <= 7e7) return Math.max(66e4, 74e4 - (g - 33e6) * 0.008);
+    if (g <= 12e7) return Math.max(50e4, 66e4 - (g - 7e7) * 0.5);
+    return Math.max(20e4, 50e4 - (g - 12e7) * 0.5);
+  }
+  function cardDeduction(g, credit, debit) { // 신용카드 등 소득공제 (25% 초과분, 신용 15%·체크/현금 30%)
+    var floor = g * 0.25, d;
+    if (credit >= floor) d = (credit - floor) * 0.15 + debit * 0.3;
+    else d = Math.max(0, debit - (floor - credit)) * 0.3;
+    return Math.floor(Math.min(d, g <= 7e7 ? 3e6 : 2.5e6));
+  }
+  function yearEnd(i) {
+    var z = function (v) { var n = num(v); return n > 0 ? n : 0; };
+    var g = z(i.gross);
+    need(g > 0, '총급여(연봉에서 비과세를 뺀 금액)를 넣어 주세요.');
+    var fam = Math.max(1, Math.round(num(i.family) || 1)), kids = Math.max(0, Math.round(num(i.kids) || 0));
+    // 4대보험 (월평균 급여로 추정)
+    var ins = insurance({ pay: Math.floor(g / 12) });
+    var pensionY = ins.pension * 12, insY = (ins.health + ins.care + ins.employ) * 12;
+    var earned = g - earnedDeduction(g);
+    var card = cardDeduction(g, z(i.credit), z(i.debit));
+    var base = Math.max(0, earned - fam * 15e5 - pensionY - insY - card);
+    var calc = basicTax(base);
+    // 세액공제
+    var ec = Math.floor(Math.min(calc <= 13e5 ? calc * 0.55 : 715e3 + (calc - 13e5) * 0.3, earnedCreditLimit(g)));
+    var kc = kids === 0 ? 0 : kids === 1 ? 25e4 : 55e4 + (kids - 2) * 40e4;
+    var spec = Math.min(z(i.insur), 1e6) * 0.12 + Math.max(0, z(i.medical) - g * 0.03) * 0.15 + z(i.edu) * 0.15;
+    var special = Math.max(13e4, Math.floor(spec)); // 특별세액공제가 13만 원보다 적으면 표준세액공제
+    var pen = Math.floor(Math.min(z(i.pension), 9e6) * (g <= 55e6 ? 0.15 : 0.12));
+    var rent = g <= 8e7 ? Math.floor(Math.min(z(i.rent), 1e7) * (g <= 55e6 ? 0.17 : 0.15)) : 0;
+    var credits = ec + kc + special + pen + rent;
+    var decided = Math.floor(Math.max(0, calc - credits) / 10) * 10;
+    var paid = z(i.paid);
+    if (!paid) paid = incomeTax(Math.floor(g / 12), fam) * 12; // 모르면 간이세액표 100%로 추정
+    var diff = (paid - decided) * 1.1; // 지방소득세 10% 포함
+    var r = Math.floor(Math.abs(diff) / 10) * 10;
+    var text = (diff >= 0 ? '환급 ' : '추가 납부 ') + r.toLocaleString('ko-KR') + '원';
+    return { result: text, decided: decided, localDecided: Math.floor(decided * 0.1 / 10) * 10, paid: paid, base: base, calcTax: calc, card: card, credits: Math.min(credits, calc), earnedCredit: ec, childCredit: kc };
+  }
+
+  var api = { Y: Y, parse: parse, incomeTax: incomeTax, salary: salary, yearEnd: yearEnd, earnedDeduction: earnedDeduction, basicTax: basicTax, earnedCreditLimit: earnedCreditLimit, cardDeduction: cardDeduction, discharge: discharge, dueDate: dueDate, gpa: gpa, bmr: bmr, deposit: deposit, savings: savings, leavePay: leavePay, workHours: workHours, charCount: charCount, dday: dday, brokerage: brokerage, rentConvert: rentConvert, percent: percent, bmi: bmi, severance: severance, unemployment: unemployment, insurance: insurance, weeklyHoliday: weeklyHoliday, wageConvert: wageConvert, annualLeave: annualLeave, loan: loan, vat: vat, area: area, age: age };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.Calc = api;
 })(this);
