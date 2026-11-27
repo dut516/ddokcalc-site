@@ -36,3 +36,15 @@ footer { margin-top: 48px; padding: 20px 0 40px; border-top: 1px solid var(--lin
 .promo { border-color: var(--accent); background: var(--soft); }
 .promo p { margin: 6px 0 10px; color: var(--muted); font-size: 14px; }
 .promo a { font-weight: 700; text-decoration: none; }
+
+.crumb { color: var(--muted); font-size: 13px; margin-top: 18px; }
+.crumb a { color: var(--muted); }
+.answer .big { font-size: 20px; margin: 0 0 6px; }
+.answer .big strong { color: var(--accent); font-size: 30px; }
+.answer p { margin: 4px 0; }
+button.ghost { background: transparent; color: var(--accent); border: 1px solid var(--accent); width: auto; padding: 8px 14px; margin-top: 12px; }
+.tbl { width: 100%; border-collapse: collapse; margin: 6px 0; font-variant-numeric: tabular-nums; }
+.tbl th, .tbl td { padding: 8px 6px; border-bottom: 1px solid var(--line); text-align: right; }
+.tbl th:first-child, .tbl td:first-child { text-align: left; }
+.tbl tr:first-child th { color: var(--muted); font-weight: 600; font-size: 14px; }
+.btnlink { display: inline-block; margin: 10px 0; font-weight: 700; text-decoration: none; }
