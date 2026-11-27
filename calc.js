@@ -312,7 +312,58 @@
     return out;
   }
 
-  var api = { Y: Y, parse: parse, deposit: deposit, savings: savings, leavePay: leavePay, workHours: workHours, charCount: charCount, dday: dday, brokerage: brokerage, rentConvert: rentConvert, percent: percent, bmi: bmi, severance: severance, unemployment: unemployment, insurance: insurance, weeklyHoliday: weeklyHoliday, wageConvert: wageConvert, annualLeave: annualLeave, loan: loan, vat: vat, area: area, age: age };
+  // 전역일: 입대일 + 복무기간(개월) − 1일
+  var SERVICE = { army: 18, marine: 18, navy: 20, airforce: 21, social: 21 };
+  function discharge(i) {
+    var a = parse(i.enlist); need(a, '입대일을 넣어 주세요.');
+    var months = SERVICE[i.branch] || 18;
+    var end = addDays(addMonths(a, months), -1);
+    var today = parse(i.today) || end;
+    var total = days(a, end) + 1, done = Math.max(0, Math.min(total, days(a, today) + 1));
+    var left = days(today, end);
+    return { end: fmtDate(end), months: months + '개월', left: left > 0 ? left : 0, served: done, percent: Math.round(done / total * 1000) / 10 + '%', dday: left > 0 ? 'D-' + left : left === 0 ? 'D-DAY' : '전역 완료' };
+  }
+
+  // 출산 예정일: 마지막 생리 시작일 + 280일 (네겔레 법칙)
+  function dueDate(i) {
+    var l = parse(i.lmp); need(l, '마지막 생리 시작일을 넣어 주세요.');
+    var cycle = num(i.cycle) || 28;
+    need(cycle >= 20 && cycle <= 45, '생리 주기는 20~45일 사이로 넣어 주세요.');
+    var due = addDays(l, 280 + (cycle - 28));
+    var t = parse(i.today) || l;
+    var g = days(l, t) - (cycle - 28);
+    return { due: fmtDate(due), week: g >= 0 ? Math.floor(g / 7) + '주 ' + (g % 7) + '일' : '-', left: Math.max(0, days(t, due)) };
+  }
+
+  // 학점(평점) 계산: 과목별 학점·성적
+  var GRADE45 = { 'A+': 4.5, 'A0': 4.0, 'A': 4.0, 'B+': 3.5, 'B0': 3.0, 'B': 3.0, 'C+': 2.5, 'C0': 2.0, 'C': 2.0, 'D+': 1.5, 'D0': 1.0, 'D': 1.0, 'F': 0 };
+  function gpa(i) {
+    var lines = String(i.list || '').split('\n').map(function (s) { return s.trim(); }).filter(Boolean);
+    need(lines.length > 0, '한 줄에 "학점 성적" 형식으로 넣어 주세요. 예: 3 A+');
+    var cred = 0, pts = 0, majorDen = 0, pass = 0;
+    lines.forEach(function (ln, k) {
+      var m = /^(\d+(?:\.\d+)?)\s+([A-Da-d][+0]?|[Ff]|[Pp])$/.exec(ln.replace(/\s+/g, ' '));
+      need(m, (k + 1) + '번째 줄을 "3 A+" 형식으로 고쳐 주세요.');
+      var c = +m[1], g = m[2].toUpperCase();
+      if (g === 'P') { pass += c; return; }
+      cred += c; pts += c * GRADE45[g];
+    });
+    need(cred > 0, '평점에 들어가는 과목이 없습니다.');
+    var avg = pts / cred;
+    return { gpa45: (Math.round(avg * 100) / 100).toFixed(2), gpa43: (Math.round(avg / 4.5 * 4.3 * 100) / 100).toFixed(2), credits: cred + pass, percent: Math.round(avg / 4.5 * 1000) / 10 + '점 (단순 환산)' };
+  }
+
+  // 기초대사량(미플린-세인트 지어 공식)과 하루 필요 열량
+  var ACT = { sit: 1.2, light: 1.375, mid: 1.55, high: 1.725 };
+  function bmr(i) {
+    var w = num(i.weight), h = num(i.height), a = num(i.age);
+    need(w > 0 && h > 0 && a > 0, '몸무게, 키, 나이를 넣어 주세요.');
+    var v = 10 * w + 6.25 * h - 5 * a + (i.sex === 'f' ? -161 : 5);
+    var tdee = v * (ACT[i.activity] || 1.2);
+    return { bmr: Math.round(v), tdee: Math.round(tdee), diet: Math.round(tdee - 500) };
+  }
+
+  var api = { Y: Y, parse: parse, discharge: discharge, dueDate: dueDate, gpa: gpa, bmr: bmr, deposit: deposit, savings: savings, leavePay: leavePay, workHours: workHours, charCount: charCount, dday: dday, brokerage: brokerage, rentConvert: rentConvert, percent: percent, bmi: bmi, severance: severance, unemployment: unemployment, insurance: insurance, weeklyHoliday: weeklyHoliday, wageConvert: wageConvert, annualLeave: annualLeave, loan: loan, vat: vat, area: area, age: age };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.Calc = api;
 })(this);

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>기초대사량 계산기 2026 - 똑계산</title>
+<meta name="description" content="성별, 나이, 키, 몸무게, 활동량으로 기초대사량과 하루 유지 칼로리, 다이어트 목표 칼로리를 계산합니다(미플린-세인트 지어 공식).">
+<link rel="canonical" href="https://ddokcalc.com/bmr/">
+<meta property="og:title" content="기초대사량 계산기 2026 - 똑계산">
+<meta property="og:description" content="성별, 나이, 키, 몸무게, 활동량으로 기초대사량과 하루 유지 칼로리, 다이어트 목표 칼로리를 계산합니다(미플린-세인트 지어 공식).">
+<meta property="og:type" content="website">
+<link rel="stylesheet" href="/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"기초대사량 계산기","url":"https://ddokcalc.com/bmr/","applicationCategory":"FinanceApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"KRW"},"inLanguage":"ko"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"기초대사량보다 적게 먹어도 되나요?","acceptedAnswer":{"@type":"Answer","text":"권장하지 않습니다. 근육 감소와 요요가 생기기 쉬우니 전문가와 상의하세요."}}]}]}</script>
+</head>
+<body>
+<header class="top"><div class="wrap"><a class="brand" href="/">똑계산</a><span class="tag">2026년 기준 생활 계산기</span></div></header>
+<main class="wrap">
+
+<h1>기초대사량·하루 권장 칼로리 계산기</h1>
+<p class="lead">성별, 나이, 키, 몸무게, 활동량으로 기초대사량과 하루 유지 칼로리, 다이어트 목표 칼로리를 계산합니다(미플린-세인트 지어 공식).</p>
+<form id="calc" class="card">
+<label for="f-sex">성별</label><select id="f-sex" name="sex"><option value="m">남성</option><option value="f">여성</option></select>
+<label for="f-age">나이 (만)</label><input id="f-age" name="age" type="text" inputmode="decimal" placeholder="30">
+<label for="f-height">키 (cm)</label><input id="f-height" name="height" type="text" inputmode="decimal" placeholder="170">
+<label for="f-weight">몸무게 (kg)</label><input id="f-weight" name="weight" type="text" inputmode="decimal" placeholder="65">
+<label for="f-activity">활동량</label><select id="f-activity" name="activity"><option value="sit">거의 안 움직임 (사무직)</option><option value="light">가벼운 운동 주 1~3회</option><option value="mid">보통 운동 주 3~5회</option><option value="high">강한 운동 주 6~7회</option></select>
+<button type="submit">계산하기</button>
+</form>
+<div id="result" class="card result" hidden aria-live="polite"></div>
+
+<section><h2>계산 방법</h2><ul><li>남성: 10 × 몸무게 + 6.25 × 키 − 5 × 나이 + 5</li><li>여성: 10 × 몸무게 + 6.25 × 키 − 5 × 나이 − 161</li><li>하루 유지 칼로리 = 기초대사량 × 활동계수(1.2~1.725)</li><li>하루 500kcal를 줄이면 1주에 약 0.5kg 감량을 기대합니다.</li></ul><p class="law">근거: 없음 (Mifflin-St Jeor 공식, 참고용)</p></section>
+<section><h2>자주 묻는 질문</h2><details><summary>기초대사량보다 적게 먹어도 되나요?</summary><p>권장하지 않습니다. 근육 감소와 요요가 생기기 쉬우니 전문가와 상의하세요.</p></details></section>
+<section><h2>다른 계산기</h2><nav class="others"><a href="/severance/">퇴직금 계산기</a><a href="/unemployment/">실업급여 계산기</a><a href="/insurance/">4대보험 계산기</a><a href="/weekly-holiday-pay/">주휴수당 계산기</a><a href="/hourly-monthly/">시급 월급 변환 계산기</a><a href="/annual-leave/">연차 계산기</a><a href="/loan-interest/">대출 이자 계산기</a><a href="/vat/">부가세 계산기</a><a href="/pyeong/">평수 계산기</a><a href="/age/">만 나이 계산기</a><a href="/char-count/">글자수 세기</a><a href="/d-day/">D-day 계산기</a><a href="/brokerage-fee/">부동산 중개수수료 계산기</a><a href="/rent-conversion/">전월세 전환 계산기</a><a href="/percent/">퍼센트 계산기</a><a href="/bmi/">BMI 계산기</a><a href="/deposit-interest/">예금 이자 계산기</a><a href="/savings-interest/">적금 이자 계산기</a><a href="/leave-pay/">연차수당 계산기</a><a href="/work-hours/">근무시간 계산기</a><a href="/discharge/">전역일 계산기</a><a href="/due-date/">출산 예정일 계산기</a><a href="/gpa/">학점 계산기</a></nav></section>
+<script src="/calc.js"></script>
+<script>window.PAGE={"fn":"bmr","out":[["bmr","기초대사량 (kcal)","num"],["tdee","하루 유지 칼로리 (kcal)","num"],["diet","다이어트 목표 (−500 kcal)","num"]]};</script>
+<script src="/ui.js"></script>
+</main>
+<footer><div class="wrap">
+<p>계산 결과는 참고용입니다. 실제 금액은 회사·기관의 확정 금액을 따르세요. 기준값 확인일: 2026-11-26</p>
+<p><a href="/">모든 계산기</a> · <a href="/about.html">사이트 소개·문의</a> · <a href="/privacy.html">개인정보처리방침</a></p>
+</div></footer>
+</body>
+</html>
