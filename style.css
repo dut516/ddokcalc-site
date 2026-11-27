@@ -48,3 +48,29 @@ button.ghost { background: transparent; color: var(--accent); border: 1px solid 
 .tbl th:first-child, .tbl td:first-child { text-align: left; }
 .tbl tr:first-child th { color: var(--muted); font-weight: 600; font-size: 14px; }
 .btnlink { display: inline-block; margin: 10px 0; font-weight: 700; text-decoration: none; }
+
+.trust { font-size: 13px; color: var(--muted); margin: 6px 0 0; }
+.trust::before { content: "✓ "; color: var(--accent); }
+.result .big { font-size: 18px; margin: 0 0 4px; }
+.result .big strong { color: var(--accent); font-size: 32px; }
+.bar { display: flex; height: 12px; border-radius: 6px; overflow: hidden; margin: 12px 0 6px; background: var(--line); }
+.bar .net { background: var(--accent); } .bar .ins { background: #f59e0b; } .bar .tax { background: #ef4444; }
+.legend { font-size: 12px; color: var(--muted); display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.legend .k { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 3px; vertical-align: -1px; }
+.legend .k.net { background: var(--accent); } .legend .k.ins { background: #f59e0b; } .legend .k.tax { background: #ef4444; }
+.why { border: 0; padding: 8px 0 0; }
+.explain { width: 100%; border-collapse: collapse; font-size: 14px; }
+.explain th, .explain td { padding: 7px 4px; border-bottom: 1px solid var(--line); vertical-align: top; text-align: left; font-weight: 600; }
+.explain td { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.explain small { display: block; font-weight: 400; color: var(--muted); font-size: 12px; margin-top: 2px; }
+.adv { margin-top: 12px; border: 0; padding: 0; }
+.adv summary { color: var(--accent); font-size: 14px; }
+.tools .tabs { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+.tools .tabs button { width: auto; margin: 0; padding: 8px 12px; background: transparent; color: var(--muted); border: 1px solid var(--line); font-size: 14px; }
+.tools .tabs button.on { color: #fff; background: var(--accent); border-color: var(--accent); }
+.tools .share { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.tools .share .ghost { margin-top: 0; }
+.cmp td:nth-child(n+2), .cmp th:nth-child(n+2) { text-align: right; }
+form input, form select { min-height: 46px; }
+@media (max-width: 480px) { .result .big strong { font-size: 28px; } .tbl.cmp { font-size: 13px; } }
+.result .explain tr:first-child td, .result .cmp tr:first-child td { color: inherit; font-size: inherit; }

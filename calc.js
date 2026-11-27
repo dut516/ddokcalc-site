@@ -408,6 +408,57 @@
     return { net: net, netYear: net * 12, monthly: monthly, pension: ins.pension, health: ins.health, care: ins.care, employ: ins.employ, incomeTax: it, localTax: local, deduct: deduct };
   }
 
+  // 간이세액표에서 어느 구간을 썼는지 (천원 단위). 1,000만 원 초과는 표 밖 공식.
+  function taxBracket(monthly) {
+    var T = taxTable(), k = monthly / 1000;
+    if (k < T.rows[0][0]) return { below: true, low: 0, high: T.rows[0][0] };
+    if (k >= 10000) return { over: true, low: 10000 };
+    for (var i = 0; i < T.rows.length; i++) if (k >= T.rows[i][0] && k < T.rows[i][1]) return { low: T.rows[i][0], high: T.rows[i][1], index: i + 1, total: T.rows.length };
+    return null;
+  }
+  // 계산 과정을 사람이 읽을 수 있는 줄로 (판단·권유 없이 사실만)
+  function salaryExplain(i) {
+    var r = salary(i);
+    var nontax = num(i.nontax); if (!(nontax >= 0)) nontax = 0;
+    var taxable = Math.max(0, r.monthly - nontax);
+    var fam = Math.max(1, Math.round(num(i.family) || 1));
+    var kids = Math.min(Math.max(0, Math.round(num(i.kids) || 0)), fam - 1);
+    var rate = num(i.rate) || 100;
+    var base = Math.min(Y.pensionBaseMax, Math.max(Y.pensionBaseMin, Math.floor(taxable / 1000) * 1000));
+    var b = taxBracket(taxable);
+    var f = function (n) { return Math.round(n).toLocaleString('ko-KR'); };
+    var lines = [
+      ['월 급여', '연봉 ' + f(num(i.annual)) + '원 ÷ 12', r.monthly],
+      ['과세 대상 급여', '월 급여 − 비과세 ' + f(nontax) + '원', taxable],
+      ['국민연금', '기준소득월액 ' + f(base) + '원 × 4.75%' + (base !== Math.floor(taxable / 1000) * 1000 ? ' (상·하한 적용)' : ''), r.pension],
+      ['건강보험', '과세 대상 급여 × 3.595%', r.health],
+      ['장기요양보험', '건강보험료 × 13.14%', r.care],
+      ['고용보험', '과세 대상 급여 × 0.9%', r.employ]
+    ];
+    var taxNote;
+    if (!b || b.below) taxNote = '간이세액표 첫 구간(77만 원) 미만이라 0원';
+    else if (b.over) taxNote = '월 1,000만 원 초과: 간이세액표 1,000만 원 세액 + 초과분 공식(소득세법 시행령 별표2)';
+    else taxNote = '간이세액표 ' + f(b.low) + '천~' + f(b.high) + '천 원 구간(' + b.index + '/' + b.total + '번째), 공제대상 가족 ' + fam + '명 칸';
+    if (kids > 0) taxNote += ', 8~20세 자녀 ' + kids + '명 차감';
+    if (rate !== 100) taxNote += ', 원천징수 비율 ' + rate + '%';
+    lines.push(['근로소득세', taxNote, r.incomeTax]);
+    lines.push(['지방소득세', '근로소득세 × 10%', r.localTax]);
+    lines.push(['월 실수령액', '월 급여 − 공제 합계 ' + f(r.deduct) + '원', r.net]);
+    return { result: r, lines: lines, bracket: b };
+  }
+  // 목표 월 실수령액을 받으려면 필요한 연봉 (1만 원 단위, 가장 작은 값)
+  function reverseSalary(i) {
+    var target = num(i.target);
+    need(target > 0, '목표 월 실수령액을 넣어 주세요.');
+    var opts = { nontax: i.nontax, family: i.family, kids: i.kids, rate: i.rate };
+    var net = function (a) { opts.annual = a; return salary(opts).net; };
+    var lo = 1, hi = 500000; // 만 원
+    if (net(hi * 10000) < target) throw new Error('연봉 50억 원으로도 닿지 않는 금액입니다.');
+    while (lo < hi) { var mid = Math.floor((lo + hi) / 2); if (net(mid * 10000) >= target) hi = mid; else lo = mid + 1; }
+    opts.annual = lo * 10000;
+    return { annual: lo * 10000, result: salary(opts) };
+  }
+
   // ── 연말정산 (근로소득 연간 정산) ──
   function earnedDeduction(g) { // 근로소득공제
     var d = g <= 5e6 ? g * 0.7 : g <= 15e6 ? 3.5e6 + (g - 5e6) * 0.4 : g <= 45e6 ? 7.5e6 + (g - 15e6) * 0.15 : g <= 1e8 ? 12e6 + (g - 45e6) * 0.05 : 14.75e6 + (g - 1e8) * 0.02;
@@ -459,7 +510,7 @@
     return { result: text, decided: decided, localDecided: Math.floor(decided * 0.1 / 10) * 10, paid: paid, base: base, calcTax: calc, card: card, credits: Math.min(credits, calc), earnedCredit: ec, childCredit: kc };
   }
 
-  var api = { Y: Y, parse: parse, incomeTax: incomeTax, salary: salary, yearEnd: yearEnd, earnedDeduction: earnedDeduction, basicTax: basicTax, earnedCreditLimit: earnedCreditLimit, cardDeduction: cardDeduction, discharge: discharge, dueDate: dueDate, gpa: gpa, bmr: bmr, deposit: deposit, savings: savings, leavePay: leavePay, workHours: workHours, charCount: charCount, dday: dday, brokerage: brokerage, rentConvert: rentConvert, percent: percent, bmi: bmi, severance: severance, unemployment: unemployment, insurance: insurance, weeklyHoliday: weeklyHoliday, wageConvert: wageConvert, annualLeave: annualLeave, loan: loan, vat: vat, area: area, age: age };
+  var api = { Y: Y, parse: parse, incomeTax: incomeTax, salary: salary, taxBracket: taxBracket, salaryExplain: salaryExplain, reverseSalary: reverseSalary, yearEnd: yearEnd, earnedDeduction: earnedDeduction, basicTax: basicTax, earnedCreditLimit: earnedCreditLimit, cardDeduction: cardDeduction, discharge: discharge, dueDate: dueDate, gpa: gpa, bmr: bmr, deposit: deposit, savings: savings, leavePay: leavePay, workHours: workHours, charCount: charCount, dday: dday, brokerage: brokerage, rentConvert: rentConvert, percent: percent, bmi: bmi, severance: severance, unemployment: unemployment, insurance: insurance, weeklyHoliday: weeklyHoliday, wageConvert: wageConvert, annualLeave: annualLeave, loan: loan, vat: vat, area: area, age: age };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.Calc = api;
 })(this);

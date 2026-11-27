@@ -1,9 +1,10 @@
 // 결과 카드: 계산 결과를 공유하기 좋은 이미지(PNG)로 저장. 출처(사이트 주소)가 카드에 남는다.
 (function () {
-  var c = window.SALARY_CARD;
   var btn = document.getElementById('cardBtn');
-  if (!c || !btn) return;
+  if (!btn) return;
   btn.addEventListener('click', function () {
+    var c = window.SALARY_CARD;
+    if (!c) { alert('먼저 연봉을 넣어 주세요.'); return; }
     var W = 1080, H = 1080, cv = document.createElement('canvas');
     cv.width = W; cv.height = H;
     var g = cv.getContext('2d');
@@ -23,7 +24,7 @@
     g.fillText('1년 ' + c.year + ' · 세전 대비 ' + c.rate + '%', W / 2, 640);
     g.fillText('매달 공제 ' + c.deduct, W / 2, 700);
     g.fillStyle = '#6b7280'; g.font = '400 30px ' + font;
-    g.fillText('2026년 4대보험·간이세액표 · 비과세 20만 원 · 본인 1명 기준', W / 2, 860);
+    g.fillText(c.basis || '2026년 4대보험·간이세액표 · 비과세 20만 원 · 본인 1명 기준', W / 2, 860);
     g.fillStyle = '#1f5eff'; g.font = '700 40px ' + font;
     g.fillText('얼마셈 ddokcalc.com', W / 2, 960);
     var a = document.createElement('a');
