@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>부동산 중개수수료 계산기 2026 - 똑계산</title>
+<meta name="description" content="주택 매매·전세·월세 중개보수 상한을 2021년 개정 요율표로 계산합니다. 월세 환산 거래금액, 한도액, 부가세 포함 금액까지.">
+<link rel="canonical" href="https://ddokcalc.com/brokerage-fee/">
+<meta property="og:title" content="부동산 중개수수료 계산기 2026 - 똑계산">
+<meta property="og:description" content="주택 매매·전세·월세 중개보수 상한을 2021년 개정 요율표로 계산합니다. 월세 환산 거래금액, 한도액, 부가세 포함 금액까지.">
+<meta property="og:type" content="website">
+<link rel="stylesheet" href="/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"부동산 중개수수료 계산기","url":"https://ddokcalc.com/brokerage-fee/","applicationCategory":"FinanceApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"KRW"},"inLanguage":"ko"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"부가세는 따로 내나요?","acceptedAnswer":{"@type":"Answer","text":"일반과세자 중개사는 중개보수에 부가세 10%를 더해 받을 수 있습니다. 간이과세자는 다릅니다."}},{"@type":"Question","name":"오피스텔도 같나요?","acceptedAnswer":{"@type":"Answer","text":"주거용 오피스텔은 매매 0.5%, 임대차 0.4% 등 별도 요율입니다. 이 계산기는 주택 기준입니다."}}]}]}</script>
+</head>
+<body>
+<header class="top"><div class="wrap"><a class="brand" href="/">똑계산</a><span class="tag">2026년 기준 생활 계산기</span></div></header>
+<main class="wrap">
+
+<h1>부동산 중개수수료(복비) 계산기 — 주택</h1>
+<p class="lead">주택 매매·전세·월세 중개보수 상한을 2021년 개정 요율표로 계산합니다. 월세 환산 거래금액, 한도액, 부가세 포함 금액까지.</p>
+<form id="calc" class="card">
+<label for="f-type">거래 종류</label><select id="f-type" name="type"><option value="sale">매매·교환</option><option value="lease">전세</option><option value="monthly">월세</option></select>
+<label for="f-price">거래금액 (매매가 또는 전세보증금)</label><input id="f-price" name="price" type="text" inputmode="numeric" data-money placeholder="300,000,000">
+<label for="f-deposit">월세 보증금 (월세일 때)</label><input id="f-deposit" name="deposit" type="text" inputmode="numeric" data-money placeholder="10,000,000">
+<label for="f-rent">월세 (월세일 때)</label><input id="f-rent" name="rent" type="text" inputmode="numeric" data-money placeholder="500,000">
+<button type="submit">계산하기</button>
+</form>
+<div id="result" class="card result" hidden aria-live="polite"></div>
+
+<section><h2>계산 방법</h2><ul><li>매매: 5천만 미만 0.6%(한도 25만), 2억 미만 0.5%(한도 80만), 9억 미만 0.4%, 12억 미만 0.5%, 15억 미만 0.6%, 15억 이상 0.7%</li><li>임대차: 5천만 미만 0.5%(한도 20만), 1억 미만 0.4%(한도 30만), 6억 미만 0.3%, 12억 미만 0.4%, 15억 미만 0.5%, 15억 이상 0.6%</li><li>월세 거래금액 = 보증금 + 월세 × 100 (이 값이 5천만 원 미만이면 월세 × 70)</li><li>요율은 상한이므로 중개사와 협의해 더 낮출 수 있습니다.</li></ul><p class="law">근거: 공인중개사법 시행규칙 제20조, 각 시·도 조례 (2021.10.19 시행)</p></section>
+<section><h2>자주 묻는 질문</h2><details><summary>부가세는 따로 내나요?</summary><p>일반과세자 중개사는 중개보수에 부가세 10%를 더해 받을 수 있습니다. 간이과세자는 다릅니다.</p></details><details><summary>오피스텔도 같나요?</summary><p>주거용 오피스텔은 매매 0.5%, 임대차 0.4% 등 별도 요율입니다. 이 계산기는 주택 기준입니다.</p></details></section>
+<section><h2>다른 계산기</h2><nav class="others"><a href="/severance/">퇴직금 계산기</a><a href="/unemployment/">실업급여 계산기</a><a href="/insurance/">4대보험 계산기</a><a href="/weekly-holiday-pay/">주휴수당 계산기</a><a href="/hourly-monthly/">시급 월급 변환 계산기</a><a href="/annual-leave/">연차 계산기</a><a href="/loan-interest/">대출 이자 계산기</a><a href="/vat/">부가세 계산기</a><a href="/pyeong/">평수 계산기</a><a href="/age/">만 나이 계산기</a><a href="/char-count/">글자수 세기</a><a href="/d-day/">D-day 계산기</a><a href="/rent-conversion/">전월세 전환 계산기</a><a href="/percent/">퍼센트 계산기</a><a href="/bmi/">BMI 계산기</a></nav></section>
+<script src="/calc.js"></script>
+<script>window.PAGE={"fn":"brokerage","out":[["fee","중개보수 상한","won"],["feeVat","부가세 10% 포함 시","won"],["rate","상한 요율","str"],["limit","한도액","str"],["dealPrice","거래금액(환산)","won"]]};</script>
+<script src="/ui.js"></script>
+</main>
+<footer><div class="wrap">
+<p>계산 결과는 참고용입니다. 실제 금액은 회사·기관의 확정 금액을 따르세요. 기준값 확인일: 2026-11-26</p>
+<p><a href="/">모든 계산기</a> · <a href="/about.html">사이트 소개·문의</a></p>
+</div></footer>
+</body>
+</html>

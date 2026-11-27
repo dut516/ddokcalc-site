@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>만 나이 계산기 2026 - 똑계산</title>
+<meta name="description" content="생년월일로 오늘 기준 만 나이, 연 나이, 다음 생일까지 남은 날을 계산합니다. 2023년 6월부터 법적 나이는 만 나이로 통일.">
+<link rel="canonical" href="https://ddokcalc.com/age/">
+<meta property="og:title" content="만 나이 계산기 2026 - 똑계산">
+<meta property="og:description" content="생년월일로 오늘 기준 만 나이, 연 나이, 다음 생일까지 남은 날을 계산합니다. 2023년 6월부터 법적 나이는 만 나이로 통일.">
+<meta property="og:type" content="website">
+<link rel="stylesheet" href="/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"만 나이 계산기","url":"https://ddokcalc.com/age/","applicationCategory":"FinanceApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"KRW"},"inLanguage":"ko"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"술·담배 나이는?","acceptedAnswer":{"@type":"Answer","text":"청소년보호법은 연 나이 기준이라 만 나이와 다를 수 있습니다."}}]}]}</script>
+</head>
+<body>
+<header class="top"><div class="wrap"><a class="brand" href="/">똑계산</a><span class="tag">2026년 기준 생활 계산기</span></div></header>
+<main class="wrap">
+
+<h1>만 나이 계산기</h1>
+<p class="lead">생년월일로 오늘 기준 만 나이, 연 나이, 다음 생일까지 남은 날을 계산합니다. 2023년 6월부터 법적 나이는 만 나이로 통일.</p>
+<form id="calc" class="card">
+<label for="f-birth">생년월일</label><input id="f-birth" name="birth" type="date">
+<label for="f-ref">기준일 (오늘)</label><input id="f-ref" name="ref" type="date" data-today>
+<button type="submit">계산하기</button>
+</form>
+<div id="result" class="card result" hidden aria-live="polite"></div>
+
+<section><h2>계산 방법</h2><ul><li>만 나이 = 기준 연도 − 출생 연도, 생일이 아직 안 지났으면 1을 뺌</li><li>연 나이는 병역·청소년보호법 등 일부 법에서 씀</li></ul><p class="law">근거: 민법 제158조, 행정기본법 제7조의2 (2023.6.28 시행)</p></section>
+<section><h2>자주 묻는 질문</h2><details><summary>술·담배 나이는?</summary><p>청소년보호법은 연 나이 기준이라 만 나이와 다를 수 있습니다.</p></details></section>
+<section><h2>다른 계산기</h2><nav class="others"><a href="/severance/">퇴직금 계산기</a><a href="/unemployment/">실업급여 계산기</a><a href="/insurance/">4대보험 계산기</a><a href="/weekly-holiday-pay/">주휴수당 계산기</a><a href="/hourly-monthly/">시급 월급 변환 계산기</a><a href="/annual-leave/">연차 계산기</a><a href="/loan-interest/">대출 이자 계산기</a><a href="/vat/">부가세 계산기</a><a href="/pyeong/">평수 계산기</a><a href="/char-count/">글자수 세기</a><a href="/d-day/">D-day 계산기</a><a href="/brokerage-fee/">부동산 중개수수료 계산기</a><a href="/rent-conversion/">전월세 전환 계산기</a><a href="/percent/">퍼센트 계산기</a><a href="/bmi/">BMI 계산기</a></nav></section>
+<script src="/calc.js"></script>
+<script>window.PAGE={"fn":"age","out":[["man","만 나이","num"],["yearAge","연 나이 (현재 연도 − 출생 연도)","num"],["toNext","다음 생일까지","day"]]};</script>
+<script src="/ui.js"></script>
+</main>
+<footer><div class="wrap">
+<p>계산 결과는 참고용입니다. 실제 금액은 회사·기관의 확정 금액을 따르세요. 기준값 확인일: 2026-11-26</p>
+<p><a href="/">모든 계산기</a> · <a href="/about.html">사이트 소개·문의</a></p>
+</div></footer>
+</body>
+</html>
