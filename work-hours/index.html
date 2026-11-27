@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>근무시간 계산기 2026 - 똑계산</title>
+<meta name="description" content="출근·퇴근 시각과 휴게시간으로 하루 근무시간, 연장근로(8시간 초과), 야간근로(밤 10시~새벽 6시) 시간과 가산수당 포함 일당을 계산합니다.">
+<link rel="canonical" href="https://ddokcalc.com/work-hours/">
+<meta property="og:title" content="근무시간 계산기 2026 - 똑계산">
+<meta property="og:description" content="출근·퇴근 시각과 휴게시간으로 하루 근무시간, 연장근로(8시간 초과), 야간근로(밤 10시~새벽 6시) 시간과 가산수당 포함 일당을 계산합니다.">
+<meta property="og:type" content="website">
+<link rel="stylesheet" href="/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"근무시간 계산기","url":"https://ddokcalc.com/work-hours/","applicationCategory":"FinanceApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"KRW"},"inLanguage":"ko"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"휴게시간은 꼭 줘야 하나요?","acceptedAnswer":{"@type":"Answer","text":"4시간 근무에 30분, 8시간 근무에 1시간 이상을 근무 중간에 줘야 합니다."}},{"@type":"Question","name":"주 52시간은?","acceptedAnswer":{"@type":"Answer","text":"1주 근로시간은 40시간, 연장은 주 12시간까지가 원칙입니다."}}]}]}</script>
+</head>
+<body>
+<header class="top"><div class="wrap"><a class="brand" href="/">똑계산</a><span class="tag">2026년 기준 생활 계산기</span></div></header>
+<main class="wrap">
+
+<h1>근무시간 계산기 (연장·야간 수당 포함)</h1>
+<p class="lead">출근·퇴근 시각과 휴게시간으로 하루 근무시간, 연장근로(8시간 초과), 야간근로(밤 10시~새벽 6시) 시간과 가산수당 포함 일당을 계산합니다.</p>
+<form id="calc" class="card">
+<label for="f-start">출근 시각 (예: 09:00)</label><input id="f-start" name="start" type="text" placeholder="09:00">
+<label for="f-end">퇴근 시각 (예: 18:00, 밤을 넘기면 다음날 시각)</label><input id="f-end" name="end" type="text" placeholder="18:00">
+<label for="f-breakMin">휴게시간 (분)</label><input id="f-breakMin" name="breakMin" type="text" inputmode="decimal" placeholder="60" value="60">
+<label for="f-wage">시급 (일당까지 보려면)</label><input id="f-wage" name="wage" type="text" inputmode="numeric" data-money placeholder="10,320">
+<label for="f-small">사업장 규모</label><select id="f-small" name="small"><option value="no">5인 이상 (가산수당 있음)</option><option value="yes">5인 미만 (가산수당 없음)</option></select>
+<button type="submit">계산하기</button>
+</form>
+<div id="result" class="card result" hidden aria-live="polite"></div>
+<aside class="card promo"><strong>프리랜서 세금 장부 (노션 템플릿)</strong><p>3.3% 원천징수·부가세·입금액이 자동 계산되는 노션 장부. 종합소득세 신고 때 합계를 그대로 옮기세요.</p><a href="https://buy.polar.sh/polar_cl_g1NkB5rdewQHplbnGqNx8MQlQcn6ttydWXbLg3K82yO" rel="noopener sponsored" target="_blank">자세히 보기 · 9달러, 한 번 결제</a></aside>
+<section><h2>계산 방법</h2><ul><li>근무시간 = 퇴근 − 출근 − 휴게시간</li><li>연장근로: 하루 8시간을 넘긴 시간, 통상임금의 50% 가산</li><li>야간근로: 밤 10시~새벽 6시 근무, 50% 가산 (연장과 겹치면 각각 가산)</li><li>휴게시간은 주간 근무에서 먼저 뺀다고 가정합니다.</li><li>5인 미만 사업장은 연장·야간 가산수당 규정이 적용되지 않습니다.</li></ul><p class="law">근거: 근로기준법 제50조·제54조·제56조</p></section>
+<section><h2>자주 묻는 질문</h2><details><summary>휴게시간은 꼭 줘야 하나요?</summary><p>4시간 근무에 30분, 8시간 근무에 1시간 이상을 근무 중간에 줘야 합니다.</p></details><details><summary>주 52시간은?</summary><p>1주 근로시간은 40시간, 연장은 주 12시간까지가 원칙입니다.</p></details></section>
+<section><h2>다른 계산기</h2><nav class="others"><a href="/severance/">퇴직금 계산기</a><a href="/unemployment/">실업급여 계산기</a><a href="/insurance/">4대보험 계산기</a><a href="/weekly-holiday-pay/">주휴수당 계산기</a><a href="/hourly-monthly/">시급 월급 변환 계산기</a><a href="/annual-leave/">연차 계산기</a><a href="/loan-interest/">대출 이자 계산기</a><a href="/vat/">부가세 계산기</a><a href="/pyeong/">평수 계산기</a><a href="/age/">만 나이 계산기</a><a href="/char-count/">글자수 세기</a><a href="/d-day/">D-day 계산기</a><a href="/brokerage-fee/">부동산 중개수수료 계산기</a><a href="/rent-conversion/">전월세 전환 계산기</a><a href="/percent/">퍼센트 계산기</a><a href="/bmi/">BMI 계산기</a><a href="/deposit-interest/">예금 이자 계산기</a><a href="/savings-interest/">적금 이자 계산기</a><a href="/leave-pay/">연차수당 계산기</a></nav></section>
+<script src="/calc.js"></script>
+<script>window.PAGE={"fn":"workHours","out":[["hours","실제 근무시간","hour"],["over","연장근로 (8시간 초과)","hour"],["night","야간근로 (22~06시)","hour"],["dayPay","일당 (가산 포함)","won"],["basePay","기본 일당","won"],["extra","가산수당 (50%)","won"]]};</script>
+<script src="/ui.js"></script>
+</main>
+<footer><div class="wrap">
+<p>계산 결과는 참고용입니다. 실제 금액은 회사·기관의 확정 금액을 따르세요. 기준값 확인일: 2026-11-26</p>
+<p><a href="/">모든 계산기</a> · <a href="/about.html">사이트 소개·문의</a> · <a href="/privacy.html">개인정보처리방침</a></p>
+</div></footer>
+</body>
+</html>

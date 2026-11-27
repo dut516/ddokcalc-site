@@ -251,7 +251,68 @@
     return { bmi: String(v), level: lv, normal: Math.round(18.5 * h * h * 10) / 10 + ' ~ ' + Math.round(22.9 * h * h * 10) / 10 + 'kg' };
   }
 
-  var api = { Y: Y, parse: parse, charCount: charCount, dday: dday, brokerage: brokerage, rentConvert: rentConvert, percent: percent, bmi: bmi, severance: severance, unemployment: unemployment, insurance: insurance, weeklyHoliday: weeklyHoliday, wageConvert: wageConvert, annualLeave: annualLeave, loan: loan, vat: vat, area: area, age: age };
+  // 예금·적금 이자 (이자소득세 15.4% = 소득세 14% + 지방소득세 1.4%)
+  var TAX = { normal: 0.154, free: 0, preferential: 0.095 };
+  function taxOf(interest, kind) {
+    var rate = TAX[kind] === undefined ? TAX.normal : TAX[kind];
+    if (!rate) return 0;
+    if (kind === 'preferential') return Math.floor(interest * 0.09 / 10) * 10 + Math.floor(interest * 0.005 / 10) * 10;
+    return Math.floor(interest * 0.14 / 10) * 10 + Math.floor(interest * 0.014 / 10) * 10;
+  }
+  function deposit(i) {
+    var P = num(i.principal), r = num(i.rate) / 100, n = Math.round(num(i.months));
+    need(P > 0 && r >= 0 && n > 0, '예치금, 연 이자율, 기간(개월)을 넣어 주세요.');
+    var interest = i.compound === 'monthly' ? P * (Math.pow(1 + r / 12, n) - 1) : P * r * n / 12;
+    interest = Math.floor(interest);
+    var tax = taxOf(interest, i.tax);
+    return { interest: interest, tax: tax, net: interest - tax, total: P + interest - tax };
+  }
+  function savings(i) {
+    var M = num(i.monthly), r = num(i.rate) / 100, n = Math.round(num(i.months));
+    need(M > 0 && r >= 0 && n > 0, '월 납입액, 연 이자율, 기간(개월)을 넣어 주세요.');
+    var interest = 0;
+    if (i.compound === 'monthly') { for (var k = 1; k <= n; k++) interest += M * (Math.pow(1 + r / 12, k) - 1); }
+    else interest = M * (r / 12) * n * (n + 1) / 2;
+    interest = Math.floor(interest);
+    var tax = taxOf(interest, i.tax);
+    return { paid: M * n, interest: interest, tax: tax, net: interest - tax, total: M * n + interest - tax };
+  }
+
+  // 연차수당: 미사용 연차 × 1일 통상임금
+  function leavePay(i) {
+    var d = num(i.days);
+    need(d > 0, '남은(쓰지 못한) 연차 일수를 넣어 주세요.');
+    var hourly = i.mode === 'monthly' ? num(i.amount) / 209 : num(i.amount);
+    need(hourly > 0, '통상임금(월급 또는 시급)을 넣어 주세요.');
+    var hours = num(i.hours) || 8;
+    var daily = Math.round(hourly * hours);
+    return { daily: daily, hourly: Math.round(hourly), pay: Math.round(daily * d) };
+  }
+
+  // 근무시간 (하루): 연장(8시간 초과)·야간(22~06시) 시간과 가산 일당
+  function hm(s) { var m = /^(\d{1,2}):(\d{2})$/.exec(String(s || '').trim()); return m ? (+m[1]) * 60 + (+m[2]) : NaN; }
+  function workHours(i) {
+    var a = hm(i.start), b = hm(i.end);
+    need(isFinite(a) && isFinite(b), '출근·퇴근 시각을 09:00 처럼 넣어 주세요.');
+    if (b <= a) b += 24 * 60; // 밤을 넘기는 근무
+    var brk = num(i.breakMin) || 0;
+    var total = b - a - brk;
+    need(total > 0, '휴게시간이 근무시간보다 깁니다.');
+    var night = 0;
+    for (var t = a; t < b; t++) { var h = Math.floor((t % 1440) / 60); if (h >= 22 || h < 6) night++; }
+    night = Math.max(0, night - Math.max(0, brk - (b - a - night))); // 휴게는 주간에서 먼저 뺀다고 가정
+    var over = Math.max(0, total - 8 * 60);
+    var out = { hours: Math.round(total / 6) / 10, over: Math.round(over / 6) / 10, night: Math.round(night / 6) / 10 };
+    var w = num(i.wage);
+    if (w > 0) {
+      out.basePay = Math.round(w * total / 60);
+      out.extra = i.small === 'yes' ? 0 : Math.round(w * 0.5 * (over + night) / 60);
+      out.dayPay = out.basePay + out.extra;
+    }
+    return out;
+  }
+
+  var api = { Y: Y, parse: parse, deposit: deposit, savings: savings, leavePay: leavePay, workHours: workHours, charCount: charCount, dday: dday, brokerage: brokerage, rentConvert: rentConvert, percent: percent, bmi: bmi, severance: severance, unemployment: unemployment, insurance: insurance, weeklyHoliday: weeklyHoliday, wageConvert: wageConvert, annualLeave: annualLeave, loan: loan, vat: vat, area: area, age: age };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.Calc = api;
 })(this);
