@@ -455,7 +455,7 @@
     if (!paid) paid = incomeTax(Math.floor(g / 12), fam) * 12; // 모르면 간이세액표 100%로 추정
     var diff = (paid - decided) * 1.1; // 지방소득세 10% 포함
     var r = Math.floor(Math.abs(diff) / 10) * 10;
-    var text = (diff >= 0 ? '환급 ' : '추가 납부 ') + r.toLocaleString('ko-KR') + '원';
+    var text = (diff >= 0 ? '돌려받을 예상액 ' : '더 낼 예상액 ') + r.toLocaleString('ko-KR') + '원';
     return { result: text, decided: decided, localDecided: Math.floor(decided * 0.1 / 10) * 10, paid: paid, base: base, calcTax: calc, card: card, credits: Math.min(credits, calc), earnedCredit: ec, childCredit: kc };
   }
 
